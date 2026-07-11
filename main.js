@@ -6,6 +6,10 @@ const COMPROBAR_UPDATES_MS = 30 * 60 * 1000; // cada 30 minutos mientras esta ab
 
 const URL_PANEL = "https://evens-team-pagina-web-production.up.railway.app";
 
+// Marca que la web usa para reconocer que la peticion viene de esta app y no
+// de un navegador normal (ver app.before_request en el Flask).
+const MARCA_APP = "EVENsTeamDesktopApp/1.0";
+
 // Dominios en los que se permite navegar dentro de la propia ventana de la app
 // (el panel en si, y discord.com porque el login pasa por ahi y tiene que
 // volver a caer en el panel para completar la sesion). Cualquier otro enlace
@@ -37,6 +41,7 @@ function crearVentana() {
         },
     });
 
+    ventana.webContents.setUserAgent(`${ventana.webContents.getUserAgent()} ${MARCA_APP}`);
     ventana.loadURL(URL_PANEL);
 
     ventana.webContents.on("will-navigate", (event, url) => {

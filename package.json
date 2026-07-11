@@ -1,6 +1,6 @@
 {
   "name": "evens-team-panel",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "App de escritorio de EVEN's Team Panel",
   "main": "main.js",
   "author": "EVEN's Team",
@@ -32,7 +32,7 @@
       "provider": "github",
       "owner": "EVEN-s-team",
       "repo": "EVENs-team-Desktop-App",
-      "draft": false
+      "releaseType": "release"
     },
     "win": {
       "target": "nsis",
