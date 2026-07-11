@@ -9,7 +9,9 @@
   "scripts": {
     "start": "electron .",
     "build": "electron-builder --win",
-    "release": "electron-builder --win --publish always"
+    "build:linux": "electron-builder --linux",
+    "release": "electron-builder --win --publish always",
+    "release:linux": "electron-builder --linux --publish always"
   },
   "dependencies": {
     "electron-updater": "^6.3.9"
@@ -44,6 +46,12 @@
       "createDesktopShortcut": true,
       "createStartMenuShortcut": true,
       "artifactName": "EVENs-Team-Panel-Setup.exe"
+    },
+    "linux": {
+      "target": ["AppImage"],
+      "icon": "build/icon.png",
+      "category": "Network",
+      "artifactName": "EVENs-Team-Panel.AppImage"
     }
   }
 }
