@@ -1,6 +1,6 @@
 {
   "name": "evens-team-panel",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "App de escritorio de EVEN's Team Panel",
   "main": "main.js",
   "author": "EVEN's Team",
@@ -8,7 +8,11 @@
   "private": true,
   "scripts": {
     "start": "electron .",
-    "build": "electron-builder --win"
+    "build": "electron-builder --win",
+    "release": "electron-builder --win --publish always"
+  },
+  "dependencies": {
+    "electron-updater": "^6.3.9"
   },
   "devDependencies": {
     "electron": "^33.0.0",
@@ -24,6 +28,12 @@
     "files": [
       "main.js"
     ],
+    "publish": {
+      "provider": "github",
+      "owner": "EVEN-s-team",
+      "repo": "EVENs-team-Desktop-App",
+      "draft": false
+    },
     "win": {
       "target": "nsis",
       "icon": "build/icon.ico"

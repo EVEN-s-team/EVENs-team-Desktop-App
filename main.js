@@ -1,5 +1,8 @@
-const { app, BrowserWindow, shell, Menu } = require("electron");
+const { app, BrowserWindow, shell, Menu, dialog } = require("electron");
 const path = require("path");
+const { autoUpdater } = require("electron-updater");
+
+const COMPROBAR_UPDATES_MS = 30 * 60 * 1000; // cada 30 minutos mientras esta abierta
 
 const URL_PANEL = "https://evens-team-pagina-web-production.up.railway.app";
 
@@ -54,9 +57,40 @@ function crearVentana() {
     return ventana;
 }
 
+function configurarAutoUpdate() {
+    autoUpdater.autoDownload = true;
+    autoUpdater.autoInstallOnAppQuit = true;
+
+    autoUpdater.on("update-downloaded", (info) => {
+        dialog
+            .showMessageBox({
+                type: "info",
+                title: "Actualización lista",
+                message: `Hay una nueva versión (${info.version}) lista para instalar.`,
+                detail: "Se cerrará la app un momento para instalarla.",
+                buttons: ["Reiniciar ahora", "Más tarde"],
+                defaultId: 0,
+                cancelId: 1,
+            })
+            .then((resultado) => {
+                if (resultado.response === 0) autoUpdater.quitAndInstall();
+            });
+    });
+
+    autoUpdater.on("error", (err) => {
+        console.error("Error comprobando actualizaciones:", err);
+    });
+
+    autoUpdater.checkForUpdates().catch(() => {});
+    setInterval(() => {
+        autoUpdater.checkForUpdates().catch(() => {});
+    }, COMPROBAR_UPDATES_MS);
+}
+
 app.whenReady().then(() => {
     Menu.setApplicationMenu(null);
     crearVentana();
+    configurarAutoUpdate();
 
     app.on("activate", () => {
         if (BrowserWindow.getAllWindows().length === 0) crearVentana();
