@@ -1,6 +1,6 @@
 {
   "name": "evens-team-panel",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "App de escritorio de EVEN's Team Panel",
   "main": "main.js",
   "author": "EVEN's Team",
@@ -42,7 +42,8 @@
       "oneClick": false,
       "allowToChangeInstallationDirectory": true,
       "createDesktopShortcut": true,
-      "createStartMenuShortcut": true
+      "createStartMenuShortcut": true,
+      "artifactName": "EVENs-Team-Panel-Setup.exe"
     }
   }
 }
