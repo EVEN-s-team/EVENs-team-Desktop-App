@@ -28,7 +28,9 @@
       "output": "dist"
     },
     "files": [
-      "main.js"
+      "main.js",
+      "build/icon.png",
+      "build/icon.ico"
     ],
     "publish": {
       "provider": "github",

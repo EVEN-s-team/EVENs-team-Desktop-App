@@ -32,7 +32,7 @@ function crearVentana() {
         minWidth: 900,
         minHeight: 600,
         title: "EVEN's Team Panel",
-        icon: path.join(__dirname, "build", "icon.ico"),
+        icon: path.join(__dirname, "build", process.platform === "win32" ? "icon.ico" : "icon.png"),
         backgroundColor: "#0f1811",
         autoHideMenuBar: true,
         webPreferences: {
