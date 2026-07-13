@@ -10,8 +10,10 @@
     "start": "electron .",
     "build": "electron-builder --win",
     "build:linux": "electron-builder --linux",
+    "build:mac": "electron-builder --mac",
     "release": "electron-builder --win --publish always",
-    "release:linux": "electron-builder --linux --publish always"
+    "release:linux": "electron-builder --linux --publish always",
+    "release:mac": "electron-builder --mac --publish always"
   },
   "dependencies": {
     "electron-updater": "^6.3.9"
@@ -54,6 +56,13 @@
       "icon": "build/icon.png",
       "category": "Network",
       "artifactName": "EVENs-Team-Panel.AppImage"
+    },
+    "mac": {
+      "target": ["zip"],
+      "icon": "build/icon.png",
+      "category": "public.app-category.utilities",
+      "identity": null,
+      "artifactName": "EVENs-Team-Panel-Mac.zip"
     }
   }
 }
