@@ -1,6 +1,7 @@
 const { app, BrowserWindow, shell, Menu, dialog, nativeImage } = require("electron");
 const path = require("path");
 const fs = require("fs");
+const { exec, execFile } = require("child_process");
 const { autoUpdater } = require("electron-updater");
 
 const COMPROBAR_UPDATES_MS = 30 * 60 * 1000; // cada 30 minutos mientras esta abierta
@@ -91,6 +92,92 @@ function limpiarInstaladorDescargado() {
     }
 }
 
+// ---------------------------------------------------------------
+// Zona de peligro: desinstalar la app, y acceso rapido a borrar
+// cuentas de staff (esto ultimo ya existe en el panel, en Gestion
+// staff - aqui solo se abre esa pagina directamente).
+// ---------------------------------------------------------------
+
+function irAGestionStaff() {
+    const ventana = BrowserWindow.getFocusedWindow() || BrowserWindow.getAllWindows()[0];
+    if (ventana) ventana.loadURL(`${URL_PANEL}/admin`);
+}
+
+async function desinstalarApp() {
+    const confirmacion = await dialog.showMessageBox({
+        type: "warning",
+        title: "Desinstalar EVEN's Team Panel",
+        message: "¿Seguro que quieres desinstalar la app?",
+        detail: "Esto no se puede deshacer. La app se va a cerrar.",
+        buttons: ["Cancelar", "Desinstalar"],
+        defaultId: 0,
+        cancelId: 0,
+    });
+    if (confirmacion.response !== 1) return;
+
+    if (process.platform === "linux") {
+        if (process.env.APPIMAGE) {
+            // AppImage: no hace falta contraseña, solo es un archivo suelto.
+            const rutaAppImage = process.env.APPIMAGE;
+            exec(`sleep 1 && rm -f "${rutaAppImage}"`);
+            app.quit();
+            return;
+        }
+        // Instalada via .deb: pkexec abre el dialogo grafico de contraseña
+        // del propio sistema (Polkit), como pide cualquier apt install/remove.
+        exec("pkexec apt-get remove -y evens-team-panel", (error) => {
+            if (error) {
+                dialog.showErrorBox(
+                    "No se pudo desinstalar",
+                    "Puedes hacerlo a mano abriendo una terminal y escribiendo:\nsudo apt remove evens-team-panel"
+                );
+                return;
+            }
+            app.quit();
+        });
+        return;
+    }
+
+    if (process.platform === "win32") {
+        const carpetaInstalacion = path.dirname(app.getPath("exe"));
+        const desinstalador = path.join(carpetaInstalacion, "Uninstall EVENs Team Panel.exe");
+        if (fs.existsSync(desinstalador)) {
+            execFile(desinstalador, { detached: true });
+            app.quit();
+        } else {
+            dialog.showErrorBox(
+                "No se encontró el desinstalador",
+                "Desinstálala desde Configuración > Aplicaciones de Windows."
+            );
+        }
+        return;
+    }
+
+    if (process.platform === "darwin") {
+        // En Mac la app es una carpeta .app suelta (normalmente en /Applications);
+        // "desinstalar" es simplemente borrarla, no hace falta contraseña si el
+        // usuario es dueño de esa carpeta.
+        const rutaApp = path.resolve(process.resourcesPath, "..", "..", "..");
+        exec(`sleep 1 && rm -rf "${rutaApp}"`);
+        app.quit();
+        return;
+    }
+}
+
+function crearMenu() {
+    const plantilla = [
+        {
+            label: "Cuenta",
+            submenu: [
+                { label: "Gestión de staff (borrar cuenta)...", click: irAGestionStaff },
+                { type: "separator" },
+                { label: "⚠️ Desinstalar la app...", click: desinstalarApp },
+            ],
+        },
+    ];
+    Menu.setApplicationMenu(Menu.buildFromTemplate(plantilla));
+}
+
 function configurarAutoUpdate() {
     autoUpdater.autoDownload = true;
     autoUpdater.autoInstallOnAppQuit = true;
@@ -122,7 +209,7 @@ function configurarAutoUpdate() {
 }
 
 app.whenReady().then(() => {
-    Menu.setApplicationMenu(null);
+    crearMenu();
     crearVentana();
     configurarAutoUpdate();
     limpiarInstaladorDescargado();

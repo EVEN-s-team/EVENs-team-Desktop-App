@@ -1,6 +1,6 @@
 {
   "name": "evens-team-panel",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "App de escritorio de EVEN's Team Panel",
   "main": "main.js",
   "author": "EVEN's Team",
@@ -53,7 +53,7 @@
     },
     "linux": {
       "target": ["AppImage", "deb"],
-      "icon": "build/icon.png",
+      "icon": "build/icons",
       "category": "Network",
       "maintainer": "EVEN's Team <contacto@evensteam.com>",
       "artifactName": "EVENs-Team-Panel.${ext}",
