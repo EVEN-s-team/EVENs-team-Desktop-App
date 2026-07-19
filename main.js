@@ -1,5 +1,6 @@
 const { app, BrowserWindow, shell, Menu, dialog } = require("electron");
 const path = require("path");
+const fs = require("fs");
 const { autoUpdater } = require("electron-updater");
 
 const COMPROBAR_UPDATES_MS = 30 * 60 * 1000; // cada 30 minutos mientras esta abierta
@@ -62,6 +63,30 @@ function crearVentana() {
     return ventana;
 }
 
+// Nombres exactos del instalador tal como lo sirve la web, por plataforma.
+// El navegador no permite que una web borre archivos, pero esto ya es la
+// app corriendo con permisos normales de usuario en tu compu - puede
+// limpiar el instalador que ella misma dejo en Descargas, una sola vez.
+const NOMBRES_INSTALADOR_POR_PLATAFORMA = {
+    win32: ["EVENs-Team-Panel-Setup.exe"],
+    linux: ["EVENs-Team-Panel.deb", "EVENs-Team-Panel.AppImage"],
+    darwin: ["EVENs-Team-Panel-Mac.zip"],
+};
+
+function limpiarInstaladorDescargado() {
+    const nombres = NOMBRES_INSTALADOR_POR_PLATAFORMA[process.platform] || [];
+    let carpetaDescargas;
+    try {
+        carpetaDescargas = app.getPath("downloads");
+    } catch {
+        return;
+    }
+    for (const nombre of nombres) {
+        const ruta = path.join(carpetaDescargas, nombre);
+        fs.unlink(ruta, () => {}); // silencioso: si no existe, no hay nada que hacer
+    }
+}
+
 function configurarAutoUpdate() {
     autoUpdater.autoDownload = true;
     autoUpdater.autoInstallOnAppQuit = true;
@@ -96,6 +121,7 @@ app.whenReady().then(() => {
     Menu.setApplicationMenu(null);
     crearVentana();
     configurarAutoUpdate();
+    limpiarInstaladorDescargado();
 
     app.on("activate", () => {
         if (BrowserWindow.getAllWindows().length === 0) crearVentana();
