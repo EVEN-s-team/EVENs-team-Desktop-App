@@ -25,7 +25,7 @@
   },
   "build": {
     "appId": "com.evensteam.panel",
-    "productName": "EVEN's Team Panel",
+    "productName": "EVENs Team Panel",
     "directories": {
       "output": "dist"
     },
@@ -52,10 +52,11 @@
       "artifactName": "EVENs-Team-Panel-Setup.exe"
     },
     "linux": {
-      "target": ["AppImage"],
+      "target": ["AppImage", "deb"],
       "icon": "build/icon.png",
       "category": "Network",
-      "artifactName": "EVENs-Team-Panel.AppImage"
+      "maintainer": "EVEN's Team <contacto@evensteam.com>",
+      "artifactName": "EVENs-Team-Panel.${ext}"
     },
     "mac": {
       "target": ["zip"],
