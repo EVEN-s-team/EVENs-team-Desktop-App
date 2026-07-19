@@ -56,7 +56,10 @@
       "icon": "build/icon.png",
       "category": "Network",
       "maintainer": "EVEN's Team <contacto@evensteam.com>",
-      "artifactName": "EVENs-Team-Panel.${ext}"
+      "artifactName": "EVENs-Team-Panel.${ext}",
+      "desktop": {
+        "StartupWMClass": "evens-team-panel"
+      }
     },
     "mac": {
       "target": ["zip"],

@@ -1,4 +1,4 @@
-const { app, BrowserWindow, shell, Menu, dialog } = require("electron");
+const { app, BrowserWindow, shell, Menu, dialog, nativeImage } = require("electron");
 const path = require("path");
 const fs = require("fs");
 const { autoUpdater } = require("electron-updater");
@@ -27,13 +27,17 @@ function esDominioPermitido(url) {
 }
 
 function crearVentana() {
+    // nativeImage.createFromPath (en vez de pasar la ruta en texto tal cual)
+    // porque Electron a veces no sabe leer el icono de la ventana cuando la
+    // ruta cae dentro del .asar empaquetado - con esto si funciona.
+    const iconPath = path.join(__dirname, "build", process.platform === "win32" ? "icon.ico" : "icon.png");
     const ventana = new BrowserWindow({
         width: 1280,
         height: 800,
         minWidth: 900,
         minHeight: 600,
         title: "EVEN's Team Panel",
-        icon: path.join(__dirname, "build", process.platform === "win32" ? "icon.ico" : "icon.png"),
+        icon: nativeImage.createFromPath(iconPath),
         backgroundColor: "#0f1811",
         autoHideMenuBar: true,
         webPreferences: {
