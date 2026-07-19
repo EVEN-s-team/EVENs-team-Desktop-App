@@ -93,14 +93,14 @@ function limpiarInstaladorDescargado() {
 }
 
 // ---------------------------------------------------------------
-// Zona de peligro: desinstalar la app, y acceso rapido a borrar
-// cuentas de staff (esto ultimo ya existe en el panel, en Gestion
-// staff - aqui solo se abre esa pagina directamente).
+// Zona de peligro: cerrar sesion y desinstalar la app. Borrar
+// cuentas queda fuera a proposito - eso solo desde Gestion staff
+// en el panel, no desde un menu de la app.
 // ---------------------------------------------------------------
 
-function irAGestionStaff() {
+function cerrarSesion() {
     const ventana = BrowserWindow.getFocusedWindow() || BrowserWindow.getAllWindows()[0];
-    if (ventana) ventana.loadURL(`${URL_PANEL}/admin`);
+    if (ventana) ventana.loadURL(`${URL_PANEL}/logout`);
 }
 
 async function desinstalarApp() {
@@ -169,7 +169,7 @@ function crearMenu() {
         {
             label: "Cuenta",
             submenu: [
-                { label: "Gestión de staff (borrar cuenta)...", click: irAGestionStaff },
+                { label: "Cerrar sesión", click: cerrarSesion },
                 { type: "separator" },
                 { label: "⚠️ Desinstalar la app...", click: desinstalarApp },
             ],
