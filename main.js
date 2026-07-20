@@ -27,6 +27,15 @@ function esDominioPermitido(url) {
     }
 }
 
+function esUrlDesinstalar(url) {
+    try {
+        const u = new URL(url);
+        return u.origin === URL_PANEL && u.pathname === "/app/desinstalar";
+    } catch {
+        return false;
+    }
+}
+
 function crearVentana() {
     // nativeImage.createFromPath (en vez de pasar la ruta en texto tal cual)
     // porque Electron a veces no sabe leer el icono de la ventana cuando la
@@ -51,6 +60,14 @@ function crearVentana() {
     ventana.loadURL(URL_PANEL);
 
     ventana.webContents.on("will-navigate", (event, url) => {
+        // El sidebar del panel muestra "Desinstalar la app" solo dentro de
+        // la app; ese clic se intercepta aqui (nunca llega al servidor) y
+        // lanza el desinstalador nativo de cada plataforma.
+        if (esUrlDesinstalar(url)) {
+            event.preventDefault();
+            desinstalarApp();
+            return;
+        }
         if (!esDominioPermitido(url)) {
             event.preventDefault();
             shell.openExternal(url);
